@@ -367,7 +367,7 @@ function registerMcpTools(mcpServer: McpServer, modern: boolean, callTool: CallT
 function registerMcpResources(mcpServer: McpServer, modern: boolean): void {
   const readConfigResource: ReadResourceCallback = async (uri, context) => {
     const callback = async () => {
-      logMessage(mcpServer, "debug", `Handling read_resource request for: ${uri.href}`);
+      logMessage(mcpServer, "debug", `Handling read_resource request for: REDACTED`);
       return { contents: [{ uri: uri.href, mimeType: "application/json", text: createConfigResource(mcpServer) }] };
     };
     // eslint-disable-next-line @typescript-eslint/no-deprecated -- required compatibility log bridge
@@ -375,7 +375,7 @@ function registerMcpResources(mcpServer: McpServer, modern: boolean): void {
   };
   const readHelpResource: ReadResourceCallback = async (uri, context) => {
     const callback = async () => {
-      logMessage(mcpServer, "debug", `Handling read_resource request for: ${uri.href}`);
+      logMessage(mcpServer, "debug", `Handling read_resource request for: REDACTED`);
       return { contents: [{ uri: uri.href, mimeType: "text/markdown", text: createHelpResource() }] };
     };
     // eslint-disable-next-line @typescript-eslint/no-deprecated -- required compatibility log bridge
@@ -471,10 +471,10 @@ export function createMcpServer(admissionController: ToolAdmissionController, mo
       }
       if (error instanceof ProtocolError) throw error;
       const safeError = sanitizeErrorForTransport(error);
-      logMessage(mcpServer, "error", `Tool execution error: ${safeError.message}`, {
-        tool: name,
-        args: args,
-        error: safeError.stack,
+      logMessage(mcpServer, "error", `Tool execution error: "${safeError.name}"`, {
+        tool: 'REDACTED',
+        args: 'REDACTED',
+        error: 'REDACTED',
       });
       if (error instanceof MCPSearXNGError && error.expected) {
         return errorToolResult(safeError.message);

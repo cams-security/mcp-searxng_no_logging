@@ -258,7 +258,7 @@ export async function checkContentLength(
       throw createURLSecurityPolicyError(url);
     }
 
-    logMessage(mcpServer, "warning", `HEAD check failed (proceeding with GET): ${error.message}`);
+    logMessage(mcpServer, "warning", `HEAD check failed (proceeding with GET)`);
     return null;
   } finally {
     clearTimeout(timeoutId);
@@ -572,14 +572,14 @@ export async function fetchAndConvertToMarkdown(
   signal?: AbortSignal,
 ) {
   const startTime = Date.now();
-  logMessage(mcpServer, "info", `Fetching URL: ${url}`);
+  logMessage(mcpServer, "info", `Fetching URL: REDACTED`);
 
   // Validate URL format
   let parsedUrl: URL;
   try {
     parsedUrl = new URL(url);
   } catch (error) {
-    logMessage(mcpServer, "error", `Invalid URL format: ${url}`);
+    logMessage(mcpServer, "error", `Invalid URL format: REDACTED`);
     throw createURLFormatError(url);
   }
 
@@ -593,10 +593,10 @@ export async function fetchAndConvertToMarkdown(
     const cachedEntry = urlCache.get(configuredCacheKey);
     if (cachedEntry) {
       assertSafeOutput(cachedEntry.markdownContent);
-      logMessage(mcpServer, "info", `Using cached content for URL: ${url}`);
+      logMessage(mcpServer, "info", `Using cached content for URL: REDACTED`);
       const result = applyPaginationOptions(cachedEntry.markdownContent, paginationOptions);
       const duration = Date.now() - startTime;
-      logMessage(mcpServer, "info", `Processed cached URL: ${url} (${result.length} chars in ${duration}ms)`);
+      logMessage(mcpServer, "info", `Processed cached URL: REDACTED (${result.length} chars in ${duration}ms)`);
       return result;
     }
   }
@@ -878,7 +878,7 @@ async function completeConversion(attempt: ReadAttempt, converted: ConvertedCont
   assertSafeOutput(converted.text);
   if (attempt.options.shouldCacheResult) urlCache.set(attempt.options.cacheKey, converted.text);
   const result = applyPaginationOptions(converted.text, attempt.paginationOptions);
-  logMessage(attempt.mcpServer, "info", `Successfully fetched and converted URL: ${attempt.url} (${result.length} chars in ${Date.now() - attempt.started}ms)`);
+  logMessage(attempt.mcpServer, "info", `Successfully fetched and converted URL: REDACTED (${result.length} chars in ${Date.now() - attempt.started}ms)`);
   return result;
 }
 
@@ -890,7 +890,7 @@ async function completeEmptyConversion(attempt: ReadAttempt): Promise<string> {
     return await convertUrlAttempt(attempt.mcpServer, attempt.parsedUrl, remaining,
       attempt.paginationOptions, attempt.signal, { ...attempt.options, renderedResponse: null });
   }
-  logMessage(attempt.mcpServer, "warning", `Empty content after conversion: ${attempt.url}`);
+  logMessage(attempt.mcpServer, "warning", `Empty content after conversion: REDACTED`);
   return createEmptyContentWarning(attempt.url);
 }
 
@@ -899,9 +899,9 @@ function throwAttemptError(attempt: ReadAttempt, error: any): never {
   if (error instanceof RetryableSolverReadError) throw error;
   if (error.name === "AbortError") throw createTimeoutError(attempt.timeoutMs, attempt.url);
   if (error.name === "MCPSearXNGError") {
-    logMessage(attempt.mcpServer, "error", `Error fetching URL: ${attempt.url} - ${error.message}`);
+    logMessage(attempt.mcpServer, "error", `Error fetching URL: REDACTED`);
     throw error;
   }
-  logMessage(attempt.mcpServer, "error", `Unexpected error fetching URL: ${attempt.url}`, error);
+  logMessage(attempt.mcpServer, "error", `Unexpected error fetching URL: REDACTED`);
   throw createUnexpectedError(error, { url: attempt.url });
 }

@@ -185,9 +185,12 @@ async function runTests() {
           assert.ok(!JSON.stringify(result).includes("proxy-user"));
         }
         const output = JSON.stringify(connection.logs) + connection.getStderr();
-        assert.match(output, /Invalid proxy URL/); // Prove the log sink was exercised.
+        assert.match(output, /Tool execution error/); // Prove the log sink was exercised.
         assert.ok(!output.includes("proxy-user"), output);
         assert.ok(!output.includes("proxy-secret"), output);
+        // Fork: search queries and read URLs must never reach logs.
+        assert.ok(!output.includes("diagnostic test"), output);
+        assert.ok(!output.includes("example.invalid"), output);
       } finally {
         await connection.client.close();
       }
@@ -258,7 +261,10 @@ async function runTests() {
       const result = await client.callTool({ name: "web_url_read", arguments: { url: "https://example.invalid/" } });
       assert.equal(result.isError, true);
       const output = JSON.stringify({ result, logs });
-      assert.match(JSON.stringify(logs), /Invalid proxy URL/);
+      assert.match(JSON.stringify(logs), /Tool execution error/);
+      // Fork: search queries and read URLs must never reach logs.
+      assert.ok(!JSON.stringify(logs).includes("http diagnostic"), JSON.stringify(logs));
+      assert.ok(!JSON.stringify(logs).includes("example.invalid"), JSON.stringify(logs));
       assert.ok(!output.includes("http-proxy-user"), output);
       assert.ok(!output.includes("http-proxy-secret"), output);
       await transport.terminateSession();

@@ -1,3 +1,4 @@
+//edited by Cam - removing logging from
 import { McpServer } from "@modelcontextprotocol/server";
 import { parse } from "node-html-parser";
 import { SearXNGWeb, type ResultDetail, type SearXNGWebInfobox } from "./types.js";
@@ -977,7 +978,7 @@ export async function performWebSearch(
     filters.engines ? `engines: ${filters.engines}` : null,
   ].filter(Boolean).join(", ");
   
-  logMessage(mcpServer, "info", `Starting web search: "${query}" (${searchParams})`);
+  logMessage(mcpServer, "info", `Starting web search.`);
 
   const SEARCH_TIMEOUT_MS = getSearchTimeoutMs(mcpServer);
   const responseMaxBytes = resolveSearxngResponseMaxBytes(mcpServer);
@@ -1083,7 +1084,7 @@ export async function performWebSearch(
       effectiveMax === undefined ? null : `num_results=${effectiveMax}`,
     ].filter(Boolean).join(" ");
     const filterNote = appliedFilters ? ` after applying ${appliedFilters}` : "";
-    logMessage(mcpServer, "info", `No results found for query: "${query}"${filterNote}`);
+    logMessage(mcpServer, "info", `No results found for query.`);
     const noResultsMessage = createNoResultsMessage(query);
     const emptyOutput = result_detail === "compact" ? noResultsMessage : (leadingSections ? `${leadingSections}\n\n---\n\n${noResultsMessage}` : noResultsMessage);
     const result = [emptyOutput, failureNote].filter(Boolean).join("\n\n");
@@ -1092,7 +1093,7 @@ export async function performWebSearch(
   }
 
   const duration = Date.now() - startTime;
-  logMessage(mcpServer, "info", `Search completed: "${query}" (${searchParams}) - ${slicedResults.length} results in ${duration}ms`);
+  logMessage(mcpServer, "info", `Search completed.`);
 
   const formattedResults = result_detail === "compact"
     ? formatCompactTextResults(slicedResults, maxResultChars)
